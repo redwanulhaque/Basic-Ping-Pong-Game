@@ -1,0 +1,720 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 13.2' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[     31861,        712]
+NotebookOptionsPosition[     30953,        687]
+NotebookOutlinePosition[     31466,        706]
+CellTagsIndexPosition[     31423,        703]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["Paddle Ping Pong", "Title",
+ CellChangeTimes->{{3.8924687407824774`*^9, 3.8924687717092714`*^9}, {
+  3.892468808637973*^9, 3.8924688123683414`*^9}, {3.8924693433018017`*^9, 
+  3.8924693464363513`*^9}},
+ TextAlignment->Center,ExpressionUUID->"2c638d87-0bd9-4c6b-aa29-038cf692474b"],
+
+Cell["", "Text",
+ CellChangeTimes->{{3.89246881333868*^9, 
+  3.892468818065424*^9}},ExpressionUUID->"ddd323e6-89f5-49a0-b227-\
+a685ec6ea972"],
+
+Cell[TextData[StyleBox["The objective of the game is to prevent the ball from \
+touching the bottom portion of the screen. The gameplay involves a white \
+rectangular paddle that players can move left or right using the \
+corresponding arrow keys on their keyboard. The paddle\[CloseCurlyQuote]s \
+movement helps keep the ball in rotation and prevents it from falling to the \
+bottom of the screen. Every time the ball collides with the white paddle, the \
+player earns 10 points, and the speed of the ball increases by 1. The initial \
+speed of the ball is 5, which means it rotates at a moderate pace, making it \
+relatively easy to control. However, as the game progresses, the speed of the \
+ball increases, making it more challenging for the player to keep up. Once \
+the ball reaches a speed of 15, it will remain at that speed for the \
+remainder of the game. The player\[CloseCurlyQuote]s objective, therefore, is \
+to keep the ball rotating and earn as many points as possible before it hits \
+the bottom of the screen or becomes too fast to control.",
+ FontSize->19,
+ FontColor->RGBColor[0., 0., 0.5019607843137255]]], "Text",
+ CellChangeTimes->{{3.892468825098618*^9, 3.8924688344419146`*^9}, {
+  3.892469089863984*^9, 
+  3.892469104364634*^9}},ExpressionUUID->"bfda9ca3-7f2c-465b-9c98-\
+498d047ffe05"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"DynamicModule", "[", "  ", "\n", "\n", "\t", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"pos", " ", "=", " ", 
+      RowBox[{"{", 
+       RowBox[{"500", ",", " ", "125"}], "}"}]}], ",", "    ", 
+     RowBox[{"(*", " ", 
+      RowBox[{
+       RowBox[{"position", " ", "of", " ", "the", " ", "paddle"}], ",", " ", 
+       RowBox[{
+       "which", " ", "is", " ", "in", " ", "middle", " ", "of", " ", "the", 
+        " ", "display"}]}], " ", "*)"}], "\n", "    ", 
+     RowBox[{"collide", " ", "=", " ", "False"}], ",", "    ", 
+     RowBox[{"(*", " ", 
+      RowBox[{
+       RowBox[{"flag", " ", "to", " ", "track", " ", "ball"}], "-", 
+       RowBox[{"paddle", " ", "collisions"}]}], " ", "*)"}], "\n", "    ", 
+     RowBox[{"score", " ", "=", " ", "0"}], ",", "    ", 
+     RowBox[{"(*", " ", 
+      RowBox[{"current", " ", "score", " ", "set", " ", "to", " ", "0"}], " ",
+       "*)"}], "\n", "    ", 
+     RowBox[{"speed", " ", "=", " ", "5"}]}], "}"}], ",", "    ", 
+   RowBox[{"(*", " ", 
+    RowBox[{
+    "initial", " ", "speed", " ", "of", " ", "the", " ", "ball", " ", "set", 
+     " ", "to", " ", "5"}], " ", "*)"}], "\n", "\n", "  ", 
+   RowBox[{"EventHandler", "[", "    ", 
+    RowBox[{"(*", " ", 
+     RowBox[{
+     "create", " ", "an", " ", "event", " ", "handler", " ", "for", " ", 
+      "user", " ", "input"}], " ", "*)"}], "\n", "\n", "    ", 
+    RowBox[{
+     RowBox[{"Dynamic", "[", "    ", 
+      RowBox[{"(*", " ", 
+       RowBox[{
+       "update", " ", "the", " ", "dynamic", " ", "content", " ", "of", " ", 
+        "the", " ", "module"}], " ", "*)"}], "\n", "    ", "\n", "\t\t  ", 
+      RowBox[{
+       RowBox[{"ballPos", " ", "+=", " ", 
+        RowBox[{"speed", " ", "*", " ", "ballVel"}]}], ";", "    ", 
+       RowBox[{"(*", " ", 
+        RowBox[{
+         RowBox[{
+         "update", " ", "the", " ", "position", " ", "of", " ", "the", " ", 
+          "ball", " ", "with", " ", "speed"}], " ", "+", "1"}], "*)"}], "\n", 
+       "      ", "\n", "\t      ", 
+       RowBox[{"If", "[", 
+        RowBox[{
+         RowBox[{
+          RowBox[{
+           RowBox[{
+            RowBox[{"ballPos", "[", 
+             RowBox[{"[", "1", "]"}], "]"}], " ", "-", " ", "ballRadius"}], 
+           " ", "<", " ", "0"}], " ", "||", " ", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"ballPos", "[", 
+             RowBox[{"[", "1", "]"}], "]"}], " ", "+", " ", "ballRadius"}], 
+           " ", ">", " ", "1000"}]}], ",", "    ", 
+         RowBox[{"(*", " ", 
+          RowBox[{
+          "check", " ", "if", " ", "the", " ", "ball", " ", "hit", " ", "the",
+            " ", "left", " ", "or", " ", "right", " ", "wall"}], " ", "*)"}], 
+         "\n", "\t        ", 
+         RowBox[{
+          RowBox[{"ballVel", "[", 
+           RowBox[{"[", "1", "]"}], "]"}], " ", "=", " ", 
+          RowBox[{"-", 
+           RowBox[{"ballVel", "[", 
+            RowBox[{"[", "1", "]"}], "]"}]}]}]}], "    ", 
+        RowBox[{"(*", " ", 
+         RowBox[{
+          RowBox[{"reverse", " ", "the", " ", "x"}], "-", 
+          RowBox[{"velocity", " ", "of", " ", "the", " ", "ball"}]}], " ", 
+         "*)"}], "\n", "\t      ", "]"}], ";", "\n", "\t      ", "\n", 
+       "\t      ", 
+       RowBox[{"If", "[", 
+        RowBox[{
+         RowBox[{
+          RowBox[{
+           RowBox[{
+            RowBox[{"ballPos", "[", 
+             RowBox[{"[", "2", "]"}], "]"}], " ", "-", " ", "ballRadius"}], 
+           " ", "<", " ", "0"}], " ", "||", " ", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"ballPos", "[", 
+             RowBox[{"[", "2", "]"}], "]"}], " ", "+", " ", "ballRadius"}], 
+           " ", ">", " ", "1000"}]}], ",", "    ", 
+         RowBox[{"(*", " ", 
+          RowBox[{
+          "check", " ", "if", " ", "the", " ", "ball", " ", "hit", " ", "the",
+            " ", "top", " ", "or", " ", "bottom", " ", "wall"}], " ", "*)"}], 
+         "\n", "\t        ", 
+         RowBox[{
+          RowBox[{"ballVel", "[", 
+           RowBox[{"[", "2", "]"}], "]"}], " ", "=", " ", 
+          RowBox[{"-", 
+           RowBox[{"ballVel", "[", 
+            RowBox[{"[", "2", "]"}], "]"}]}]}]}], "    ", 
+        RowBox[{"(*", " ", 
+         RowBox[{
+          RowBox[{"reverse", " ", "the", " ", "y"}], "-", 
+          RowBox[{"velocity", " ", "of", " ", "the", " ", "ball"}]}], " ", 
+         "*)"}], "\n", "\t      ", "]"}], ";", "\n", "\t      ", "\n", 
+       "\t      ", 
+       RowBox[{"If", "[", 
+        RowBox[{
+         RowBox[{
+          RowBox[{
+           RowBox[{"ballPos", "[", 
+            RowBox[{"[", "2", "]"}], "]"}], " ", "-", " ", "ballRadius"}], 
+          " ", "<=", " ", "0"}], ",", " ", 
+         RowBox[{"ballPos", " ", "=", " ", 
+          RowBox[{"{", 
+           RowBox[{
+            RowBox[{"-", "100"}], ",", " ", 
+            RowBox[{"-", "100"}]}], "}"}]}]}], "]"}], ";", "    ", 
+       RowBox[{"(*", " ", 
+        RowBox[{
+        "check", " ", "if", " ", "the", " ", "ball", " ", "hit", " ", "the", 
+         " ", "top", " ", "wall", " ", "and", " ", "reset", " ", "it", " ", 
+         "to", " ", "its", " ", "initial", " ", "position"}], " ", "*)"}], 
+       "\n", "\t      ", "\n", "\t      ", 
+       RowBox[{"If", "[", 
+        RowBox[{
+         RowBox[{
+          RowBox[{
+           RowBox[{
+            RowBox[{"ballPos", "[", 
+             RowBox[{"[", "2", "]"}], "]"}], " ", "+", " ", "ballRadius"}], 
+           " ", ">=", " ", 
+           RowBox[{
+            RowBox[{"pos", "[", 
+             RowBox[{"[", "2", "]"}], "]"}], " ", "-", " ", "75"}]}], " ", "&&",
+           " ", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"ballPos", "[", 
+             RowBox[{"[", "2", "]"}], "]"}], " ", "-", " ", "ballRadius"}], 
+           " ", "<=", " ", 
+           RowBox[{"pos", "[", 
+            RowBox[{"[", "2", "]"}], "]"}]}], " ", "&&", " ", 
+          RowBox[{
+           RowBox[{"ballPos", "[", 
+            RowBox[{"[", "1", "]"}], "]"}], " ", ">=", " ", 
+           RowBox[{
+            RowBox[{"pos", "[", 
+             RowBox[{"[", "1", "]"}], "]"}], " ", "-", " ", "100"}]}], " ", "&&",
+           " ", 
+          RowBox[{
+           RowBox[{"ballPos", "[", 
+            RowBox[{"[", "1", "]"}], "]"}], " ", "<=", " ", 
+           RowBox[{
+            RowBox[{"pos", "[", 
+             RowBox[{"[", "1", "]"}], "]"}], " ", "+", " ", "100"}]}]}], ",", 
+         "    ", 
+         RowBox[{"(*", " ", 
+          RowBox[{
+          "check", " ", "if", " ", "the", " ", "ball", " ", "hit", " ", "the",
+            " ", "paddle"}], " ", "*)"}], "\n", "\t        ", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"ballVel", "[", 
+            RowBox[{"[", "2", "]"}], "]"}], " ", "=", " ", 
+           RowBox[{"-", 
+            RowBox[{"ballVel", "[", 
+             RowBox[{"[", "2", "]"}], "]"}]}]}], ";", "    ", 
+          RowBox[{"(*", " ", 
+           RowBox[{
+            RowBox[{"reverse", " ", "the", " ", "y"}], "-", 
+            RowBox[{"velocity", " ", "of", " ", "the", " ", "ball"}]}], " ", 
+           "*)"}], "\n", "\t        ", 
+          RowBox[{"collide", " ", "=", " ", "True"}], ";", "    ", 
+          RowBox[{"(*", " ", 
+           RowBox[{
+           "set", " ", "the", " ", "collision", " ", "flag", " ", "to", " ", 
+            "True"}], " ", "*)"}], "\n", "\t        ", 
+          RowBox[{"score", " ", "+=", " ", "10"}], ";", "    ", 
+          RowBox[{"(*", " ", 
+           RowBox[{
+           "increase", " ", "the", " ", "score", " ", "by", " ", "10"}], " ", 
+           "*)"}], "\n", "\t        ", 
+          RowBox[{"If", "[", 
+           RowBox[{
+            RowBox[{"speed", " ", "<", " ", "15"}], ",", " ", 
+            RowBox[{"speed", " ", "+=", " ", "1"}]}], "]"}], ";", "    ", 
+          RowBox[{"(*", " ", 
+           RowBox[{
+            RowBox[{
+            "increase", " ", "the", " ", "speed", " ", "of", " ", "the", " ", 
+             "ball", " ", "if", " ", 
+             RowBox[{"it", "'"}], "s", " ", "not", " ", "already", " ", "at", 
+             " ", "its", " ", "maximum", " ", "by"}], " ", "+", "1"}], " ", 
+           "*)"}], "\n", "\t        ", 
+          RowBox[{"EmitSound", "@", 
+           RowBox[{"Sound", "[", 
+            RowBox[{"SoundNote", "[", 
+             RowBox[{"\"\<BassDrum\>\"", ",", " ", "0.5"}], "]"}], 
+            "]"}]}]}]}], "    ", 
+        RowBox[{"(*", " ", 
+         RowBox[{
+         "play", " ", "a", " ", "sound", " ", "effect", " ", "everytime", " ",
+           "the", " ", "ball", " ", "hit", " ", "the", " ", "paddle"}], 
+         "*)"}], "\n", "\t      ", "]"}], ";", "\n", "\t      ", "\n", 
+       "\t      ", 
+       RowBox[{"If", "[", 
+        RowBox[{
+         RowBox[{
+          RowBox[{
+           RowBox[{
+            RowBox[{"ballPos", "[", 
+             RowBox[{"[", "1", "]"}], "]"}], " ", "+", " ", "ballRadius"}], 
+           " ", ">=", " ", 
+           RowBox[{
+            RowBox[{"pos", "[", 
+             RowBox[{"[", "1", "]"}], "]"}], " ", "-", " ", "100"}]}], " ", "&&",
+           " ", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"ballPos", "[", 
+             RowBox[{"[", "1", "]"}], "]"}], " ", "-", " ", "ballRadius"}], 
+           " ", "<=", " ", 
+           RowBox[{
+            RowBox[{"pos", "[", 
+             RowBox[{"[", "1", "]"}], "]"}], " ", "+", " ", "100"}]}], " ", "&&",
+           " ", 
+          RowBox[{
+           RowBox[{"ballPos", "[", 
+            RowBox[{"[", "2", "]"}], "]"}], " ", ">=", " ", 
+           RowBox[{
+            RowBox[{"pos", "[", 
+             RowBox[{"[", "2", "]"}], "]"}], " ", "-", " ", "75"}]}], " ", "&&",
+           " ", 
+          RowBox[{
+           RowBox[{"ballPos", "[", 
+            RowBox[{"[", "2", "]"}], "]"}], " ", "<=", " ", 
+           RowBox[{"pos", "[", 
+            RowBox[{"[", "2", "]"}], "]"}]}]}], ",", "    ", 
+         RowBox[{"(*", " ", 
+          RowBox[{
+          "check", " ", "if", " ", "the", " ", "ball", " ", "hit", " ", "the",
+            " ", "sides", " ", "of", " ", "the", " ", "paddle"}], " ", "*)"}],
+          "\n", "\t        ", 
+         RowBox[{
+          RowBox[{"ballVel", "[", 
+           RowBox[{"[", "1", "]"}], "]"}], " ", "=", " ", 
+          RowBox[{"-", 
+           RowBox[{"ballVel", "[", 
+            RowBox[{"[", "1", "]"}], "]"}]}]}]}], "    ", 
+        RowBox[{"(*", " ", 
+         RowBox[{
+          RowBox[{"reverse", " ", "the", " ", "x"}], "-", 
+          RowBox[{"velocity", " ", "of", " ", "the", " ", "ball"}]}], " ", 
+         "*)"}], "\n", "\t      ", "]"}], ";", "\n", "\t      ", "\n", 
+       "\t      ", 
+       RowBox[{"If", "[", 
+        RowBox[{
+         RowBox[{"collide", " ", "&&", " ", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"ballPos", "[", 
+             RowBox[{"[", "2", "]"}], "]"}], " ", "+", " ", "ballRadius"}], 
+           " ", "<", " ", 
+           RowBox[{
+            RowBox[{"pos", "[", 
+             RowBox[{"[", "2", "]"}], "]"}], " ", "-", " ", "75"}]}]}], ",", 
+         "    ", 
+         RowBox[{"(*", " ", 
+          RowBox[{
+          "check", " ", "if", " ", "the", " ", "ball", " ", "has", " ", 
+           "left", " ", "the", " ", "paddle", " ", "after", " ", "a", " ", 
+           "collision"}], " ", "*)"}], "\n", "\t        ", 
+         RowBox[{
+          RowBox[{"ballVel", " ", "=", " ", 
+           RowBox[{
+            RowBox[{"Normalize", "[", 
+             RowBox[{"{", 
+              RowBox[{"0", ",", " ", 
+               RowBox[{
+                RowBox[{"pos", "[", 
+                 RowBox[{"[", "2", "]"}], "]"}], " ", "-", " ", 
+                RowBox[{"(", 
+                 RowBox[{
+                  RowBox[{"ballPos", "[", 
+                   RowBox[{"[", "2", "]"}], "]"}], " ", "+", " ", 
+                  "ballRadius"}], ")"}]}]}], "}"}], "]"}], " ", "*", " ", 
+            RowBox[{"Norm", "[", "ballVel", "]"}]}]}], ";", "    ", 
+          RowBox[{"(*", " ", 
+           RowBox[{
+            RowBox[{"adjust", " ", "the", " ", "y"}], "-", 
+            RowBox[{"velocity", " ", "of", " ", "the", " ", "ball"}]}], " ", 
+           "*)"}], "\n", "\t        ", 
+          RowBox[{"collide", " ", "=", " ", "False"}]}]}], "    ", 
+        RowBox[{"(*", " ", 
+         RowBox[{
+         "reset", " ", "the", " ", "collision", " ", "flag", " ", "and", " ", 
+          "end", " ", "the", " ", "game"}], "*)"}], "\n", "\t      ", "]"}], 
+       ";", "\n", "\t      ", "\n", "\t      ", "\n", "\t      ", 
+       RowBox[{"If", "[", 
+        RowBox[{
+         RowBox[{"collide", " ", "&&", " ", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"ballPos", "[", 
+             RowBox[{"[", "2", "]"}], "]"}], " ", "+", " ", "ballRadius"}], 
+           " ", ">=", " ", 
+           RowBox[{
+            RowBox[{"pos", "[", 
+             RowBox[{"[", "2", "]"}], "]"}], " ", "-", " ", "75"}]}]}], ",", 
+         "    ", 
+         RowBox[{"(*", " ", 
+          RowBox[{
+          "check", " ", "if", " ", "the", " ", "ball", " ", "is", " ", 
+           "still", " ", "colliding", " ", "with", " ", "the", " ", 
+           "paddle"}], " ", "*)"}], "\n", "\t        ", 
+         RowBox[{"collide", " ", "=", " ", "False"}]}], "    ", 
+        RowBox[{"(*", " ", 
+         RowBox[{
+         "reset", " ", "the", " ", "collision", " ", "flag", "  ", "and", " ",
+           "end", " ", "the", " ", "game"}], "*)"}], "\n", "\t      ", "]"}], 
+       ";", "\n", "\t      ", "\n", "      ", 
+       RowBox[{"Graphics", "[", " ", 
+        RowBox[{
+         RowBox[{"{", "\n", "      ", "\n", "\t    ", 
+          RowBox[{"Black", ",", " ", 
+           RowBox[{"Rectangle", "[", 
+            RowBox[{
+             RowBox[{"{", 
+              RowBox[{"0", ",", " ", "0"}], "}"}], ",", " ", 
+             RowBox[{"{", 
+              RowBox[{"1000", ",", " ", "1000"}], "}"}]}], "]"}], ",", "    ", 
+           RowBox[{"(*", " ", 
+            RowBox[{
+            "black", " ", "background", " ", "rectangle", " ", "display"}], 
+            " ", "*)"}], "\n", "\t    ", "White", ",", " ", 
+           RowBox[{"Rectangle", "[", 
+            RowBox[{
+             RowBox[{"pos", " ", "-", " ", 
+              RowBox[{"{", 
+               RowBox[{"100", ",", " ", "75"}], "}"}]}], ",", " ", 
+             RowBox[{"pos", " ", "+", " ", 
+              RowBox[{"{", 
+               RowBox[{"100", ",", " ", "0"}], "}"}]}]}], "]"}], ",", "    ", 
+           RowBox[{"(*", " ", 
+            RowBox[{
+            "white", " ", "rectangle", " ", "for", " ", "the", " ", 
+             "paddle"}], " ", "*)"}], "\n", "\t    ", 
+           RowBox[{"If", "[", 
+            RowBox[{
+             RowBox[{
+              RowBox[{
+               RowBox[{"ballPos", "[", 
+                RowBox[{"[", "2", "]"}], "]"}], " ", "-", " ", "ballRadius"}],
+               " ", ">", " ", "0"}], ",", " ", "Red", ",", " ", 
+             RowBox[{"{", "}"}]}], "]"}], ",", " ", 
+           RowBox[{"Disk", "[", 
+            RowBox[{"ballPos", ",", " ", "ballRadius"}], "]"}], ",", "    ", 
+           RowBox[{"(*", " ", 
+            RowBox[{"red", " ", "disk", " ", "for", " ", "the", " ", "ball"}],
+             " ", "*)"}], "\n", "\t    ", 
+           RowBox[{"Text", "[", 
+            RowBox[{
+             RowBox[{"Style", "[", 
+              RowBox[{
+               RowBox[{"\"\<Score: \>\"", " ", "<>", " ", 
+                RowBox[{"ToString", "[", "score", "]"}]}], ",", " ", "15", 
+               ",", " ", "Red"}], "]"}], ",", " ", 
+             RowBox[{"{", 
+              RowBox[{"500", ",", " ", "950"}], "}"}]}], "]"}], ",", "    ", 
+           RowBox[{"(*", " ", 
+            RowBox[{
+            "text", " ", "to", " ", "display", " ", "the", " ", "current", 
+             " ", "score"}], " ", "*)"}], "\n", "\t    ", 
+           RowBox[{"Text", "[", 
+            RowBox[{
+             RowBox[{"Style", "[", 
+              RowBox[{
+              "\"\<Press Enter to Reset\>\"", ",", " ", "10", ",", " ", 
+               "White"}], "]"}], ",", " ", 
+             RowBox[{"{", 
+              RowBox[{"500", ",", " ", "900"}], "}"}]}], "]"}]}], "    ", 
+          RowBox[{"(*", " ", 
+           RowBox[{
+           "text", " ", "to", " ", "prompt", " ", "the", " ", "user", " ", 
+            "to", " ", "reset", " ", "the", " ", "game"}], " ", "*)"}], "\n", 
+          "\t  ", "}"}], ",", "\n", "\t  ", "\n", "\t  ", 
+         RowBox[{"PlotRange", " ", "->", " ", 
+          RowBox[{"{", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{"0", ",", " ", "1000"}], "}"}], ",", " ", 
+            RowBox[{"{", 
+             RowBox[{"0", ",", " ", "1000"}], "}"}]}], "}"}]}]}], "    ", 
+        RowBox[{"(*", " ", 
+         RowBox[{
+         "sets", " ", "the", " ", "plot", " ", "range", " ", "for", " ", 
+          "the", " ", "graphics"}], " ", "*)"}], "\n", "\t  ", "]"}]}], "\n", 
+      "\t", "]"}], ",", "\n", "\t", "\n", "    ", 
+     RowBox[{"{", "\n", "\t  ", 
+      RowBox[{
+       RowBox[{"\"\<MouseClicked\>\"", " ", ":>", " ", 
+        RowBox[{"(", 
+         RowBox[{"SetOptions", "[", 
+          RowBox[{
+           RowBox[{"EvaluationNotebook", "[", "]"}], ",", " ", 
+           RowBox[{"WindowSelected", " ", "->", " ", "True"}]}], "]"}], 
+         ")"}]}], ",", "    ", 
+       RowBox[{"(*", " ", 
+        RowBox[{
+        "forces", " ", "the", " ", "game", " ", "window", " ", "to", " ", 
+         "be", " ", "selected", " ", "when", " ", "clicked"}], " ", "*)"}], 
+       "\n", "\t  ", 
+       RowBox[{"\"\<LeftArrowKeyDown\>\"", " ", ":>", " ", 
+        RowBox[{"If", "[", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"pos", "[", 
+            RowBox[{"[", "1", "]"}], "]"}], " ", ">", " ", "100"}], ",", " ", 
+          RowBox[{"pos", " ", "-=", " ", 
+           RowBox[{"{", 
+            RowBox[{"90", ",", " ", "0"}], "}"}]}]}], "]"}]}], ",", "    ", 
+       RowBox[{"(*", " ", 
+        RowBox[{
+        "moves", " ", "the", " ", "paddle", " ", "left", " ", "if", " ", 
+         "the", " ", "left", " ", "arrow", " ", "key", " ", "is", " ", 
+         "pressed", " ", "with", " ", "speed", " ", "90"}], " ", "*)"}], "\n",
+        "\t  ", 
+       RowBox[{"\"\<RightArrowKeyDown\>\"", " ", ":>", " ", 
+        RowBox[{"If", "[", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"pos", "[", 
+            RowBox[{"[", "1", "]"}], "]"}], " ", "<", " ", "900"}], ",", " ", 
+          RowBox[{"pos", " ", "+=", " ", 
+           RowBox[{"{", 
+            RowBox[{"90", ",", " ", "0"}], "}"}]}]}], "]"}]}], ",", "    ", 
+       RowBox[{"(*", " ", 
+        RowBox[{
+        "moves", " ", "the", " ", "paddle", " ", "right", " ", "if", " ", 
+         "the", " ", "right", " ", "arrow", " ", "key", " ", "is", " ", 
+         "pressed", " ", "with", " ", "speed", " ", "90"}], " ", "*)"}], "\n",
+        "\t  ", 
+       RowBox[{"\"\<ReturnKeyDown\>\"", " ", ":>", " ", 
+        RowBox[{"Module", "[", "    ", 
+         RowBox[{"(*", " ", 
+          RowBox[{
+          "resets", " ", "the", " ", "game", " ", "if", " ", "the", " ", 
+           "return", " ", "key", " ", "is", " ", "pressed"}], " ", "*)"}], 
+         "\n", "\t    ", 
+         RowBox[{
+          RowBox[{"{", "}"}], ",", "\n", "\t    ", 
+          RowBox[{
+           RowBox[{"pos", " ", "=", " ", 
+            RowBox[{"{", 
+             RowBox[{"500", ",", " ", "125"}], "}"}]}], ";", "    ", 
+           RowBox[{"(*", " ", 
+            RowBox[{
+             RowBox[{
+             "resets", " ", "the", " ", "paddle", " ", "position", " ", "to", 
+              " ", "the", " ", "middle", " ", "in", " ", "terms", " ", "of", 
+              " ", "x"}], "-", "axis"}], " ", "*)"}], "\n", "\t    ", 
+           RowBox[{"collide", " ", "=", " ", "False"}], ";", "    ", 
+           RowBox[{"(*", " ", 
+            RowBox[{"resets", " ", "the", " ", "collision", " ", "flag"}], 
+            " ", "*)"}], "\n", "\t    ", 
+           RowBox[{"score", " ", "=", " ", "0"}], ";", "    ", 
+           RowBox[{"(*", " ", 
+            RowBox[{"resets", " ", "the", " ", "score", " ", "to", " ", "0"}],
+             "*)"}], "\n", "\t    ", 
+           RowBox[{"speed", " ", "=", " ", "5"}], ";", "    ", 
+           RowBox[{"(*", " ", 
+            RowBox[{
+            "resets", " ", "the", " ", "ball", " ", "speed", " ", "to", " ", 
+             "5"}], "*)"}], "\n", "\t    ", 
+           RowBox[{"ballPos", " ", "=", " ", 
+            RowBox[{"{", 
+             RowBox[{"500", ",", " ", "150"}], "}"}]}], ";", "    ", 
+           RowBox[{"(*", " ", 
+            RowBox[{
+             RowBox[{"resets", " ", "the", " ", "ball", " ", "position"}], 
+             ",", " ", 
+             RowBox[{"same", " ", "as", " ", "the", " ", "paddle"}]}], " ", 
+            "*)"}], "\n", "\t    ", 
+           RowBox[{"ballVel", " ", "=", " ", 
+            RowBox[{"{", 
+             RowBox[{"1", ",", " ", "1"}], "}"}]}], ";"}]}], "    ", 
+         RowBox[{"(*", " ", 
+          RowBox[{"resets", " ", "the", " ", "ball", " ", "velocity"}], " ", 
+          "*)"}], "\n", "\t  ", "]"}]}]}], "\n", "\t", "}"}]}], "\n", "]"}], 
+   ",", "\n", "  ", "\n", "  ", 
+   RowBox[{"Initialization", " ", ":>", " ", 
+    RowBox[{"(", "    ", 
+     RowBox[{"(*", " ", 
+      RowBox[{
+      "initializes", " ", "some", " ", "variables", " ", "when", " ", "the", 
+       " ", "game", " ", "starts"}], " ", "*)"}], "\n", "     ", 
+     RowBox[{
+      RowBox[{"ballPos", " ", "=", " ", 
+       RowBox[{"{", 
+        RowBox[{"500", ",", " ", "150"}], "}"}]}], ";", "    ", 
+      RowBox[{"(*", " ", 
+       RowBox[{
+        RowBox[{
+        "sets", " ", "the", " ", "initial", " ", "ball", " ", "position", " ",
+          "to", " ", "the", " ", "middle", " ", "of", " ", "the", " ", 
+         "display", " ", "in", " ", "terms", " ", "of", " ", "x"}], "-", 
+        "axis"}], " ", "*)"}], "\n", "\t ", 
+      RowBox[{"ballVel", " ", "=", " ", 
+       RowBox[{"{", 
+        RowBox[{"1", ",", " ", "1"}], "}"}]}], ";", "    ", 
+      RowBox[{"(*", " ", 
+       RowBox[{
+       "sets", " ", "the", " ", "initial", " ", "ball", " ", "velocity", " ", 
+        "which", " ", "is", " ", "1"}], " ", "*)"}], "\n", "\t ", 
+      RowBox[{"ballRadius", " ", "=", " ", "20"}]}], "    ", 
+     RowBox[{"(*", " ", 
+      RowBox[{"sets", " ", "the", " ", "ball", " ", "radius"}], " ", "*)"}], 
+     "\n", "  ", ")"}]}]}], "\n", "]"}]], "Code",
+ CellChangeTimes->{{3.8917854998222284`*^9, 3.8917855109360847`*^9}, 
+   3.891785543770669*^9, {3.8917856180193768`*^9, 3.8917856199267073`*^9}, 
+   3.891785822154648*^9, 3.8917859249150095`*^9, {3.8917859866688433`*^9, 
+   3.891785995597868*^9}, {3.891786036111274*^9, 3.891786048599719*^9}, 
+   3.8917860841652765`*^9, {3.891786274003707*^9, 3.8917862808178787`*^9}, {
+   3.891786311225794*^9, 3.8917863117580547`*^9}, {3.891786355850935*^9, 
+   3.8917863577092915`*^9}, {3.8917864718524294`*^9, 3.891786472133991*^9}, {
+   3.891786502537117*^9, 3.891786530614957*^9}, {3.8917975083734436`*^9, 
+   3.8917975175578117`*^9}, {3.891797552819539*^9, 3.8917975543756523`*^9}, {
+   3.891797592909186*^9, 3.8917976221518264`*^9}, {3.8917976558744116`*^9, 
+   3.891797666253031*^9}, {3.8917977008932943`*^9, 3.891797701673437*^9}, 
+   3.891798324504674*^9, {3.891798371159561*^9, 3.891798454493965*^9}, {
+   3.8917987619025993`*^9, 3.8917988134388885`*^9}, {3.8923360693166866`*^9, 
+   3.8923360705937214`*^9}, 3.892336217935999*^9, {3.8923362836032467`*^9, 
+   3.89233628420671*^9}, {3.892336483977742*^9, 3.8923364858689966`*^9}, {
+   3.892379711437446*^9, 3.892379711510662*^9}, {3.8923799253087225`*^9, 
+   3.8923799465344777`*^9}, 3.8923800872025023`*^9, 3.892380125168539*^9, 
+   3.892380255869582*^9, 3.892380392507478*^9, 3.892380526215863*^9, 
+   3.8923806164677796`*^9, {3.8924658183954215`*^9, 3.8924658251357136`*^9}, {
+   3.8924661736897287`*^9, 3.8924662682419415`*^9}, {3.8924663051629095`*^9, 
+   3.8924663433483443`*^9}, {3.8924663860889072`*^9, 
+   3.8924664598784876`*^9}, {3.8924665175284753`*^9, 
+   3.8924667182430425`*^9}, {3.8924667879965777`*^9, 3.892466933075281*^9}, {
+   3.892467001009324*^9, 3.8924670134315605`*^9}, {3.89246707888107*^9, 
+   3.89246710461651*^9}, {3.8924671438596926`*^9, 3.8924673915775957`*^9}, {
+   3.8924674521145344`*^9, 3.8924674938355083`*^9}, {3.8924678643472023`*^9, 
+   3.892467865126975*^9}, {3.8924679162870975`*^9, 3.892467921799843*^9}, 
+   3.8924681059870067`*^9, {3.892468599523589*^9, 3.8924686014919963`*^9}},
+ CellLabel->"In[10]:=",ExpressionUUID->"1898bf0f-279d-43e2-bb06-0de4683ecd79"],
+
+Cell[BoxData[
+ DynamicModuleBox[{$CellContext`pos$$ = {50, 125}, $CellContext`collide$$ = 
+  False, $CellContext`score$$ = 20, $CellContext`speed$$ = 7}, 
+  TagBox[
+   DynamicBox[ToBoxes[
+    AddTo[$CellContext`ballPos, $CellContext`speed$$ $CellContext`ballVel]; If[
+       Or[
+       Part[$CellContext`ballPos, 1] - $CellContext`ballRadius < 0, 
+        Part[$CellContext`ballPos, 1] + $CellContext`ballRadius > 1000], 
+       Part[$CellContext`ballVel, 1] = -Part[$CellContext`ballVel, 1]]; If[
+       Or[
+       Part[$CellContext`ballPos, 2] - $CellContext`ballRadius < 0, 
+        Part[$CellContext`ballPos, 2] + $CellContext`ballRadius > 1000], 
+       Part[$CellContext`ballVel, 2] = -Part[$CellContext`ballVel, 2]]; 
+     If[Part[$CellContext`ballPos, 2] - $CellContext`ballRadius <= 
+       0, $CellContext`ballPos = {-100, -100}]; If[
+       And[
+       Part[$CellContext`ballPos, 2] + $CellContext`ballRadius >= 
+        Part[$CellContext`pos$$, 2] - 75, 
+        Part[$CellContext`ballPos, 2] - $CellContext`ballRadius <= 
+        Part[$CellContext`pos$$, 2], Part[$CellContext`ballPos, 1] >= 
+        Part[$CellContext`pos$$, 1] - 100, Part[$CellContext`ballPos, 1] <= 
+        Part[$CellContext`pos$$, 1] + 100], 
+       Part[$CellContext`ballVel, 2] = -
+         Part[$CellContext`ballVel, 2]; $CellContext`collide$$ = True; 
+       AddTo[$CellContext`score$$, 10]; If[$CellContext`speed$$ < 15, 
+         AddTo[$CellContext`speed$$, 1]]; EmitSound[
+         Sound[
+          SoundNote["BassDrum", 0.5]]]]; If[
+       And[
+       Part[$CellContext`ballPos, 1] + $CellContext`ballRadius >= 
+        Part[$CellContext`pos$$, 1] - 100, 
+        Part[$CellContext`ballPos, 1] - $CellContext`ballRadius <= 
+        Part[$CellContext`pos$$, 1] + 100, Part[$CellContext`ballPos, 2] >= 
+        Part[$CellContext`pos$$, 2] - 75, Part[$CellContext`ballPos, 2] <= 
+        Part[$CellContext`pos$$, 2]], 
+       Part[$CellContext`ballVel, 1] = -Part[$CellContext`ballVel, 1]]; If[
+       And[$CellContext`collide$$, 
+        Part[$CellContext`ballPos, 2] + $CellContext`ballRadius < 
+        Part[$CellContext`pos$$, 2] - 75], $CellContext`ballVel = 
+        Normalize[{
+           0, Part[$CellContext`pos$$, 2] - (
+            Part[$CellContext`ballPos, 2] + $CellContext`ballRadius)}] 
+         Norm[$CellContext`ballVel]; $CellContext`collide$$ = False]; If[
+       And[$CellContext`collide$$, 
+        Part[$CellContext`ballPos, 2] + $CellContext`ballRadius >= 
+        Part[$CellContext`pos$$, 2] - 75], $CellContext`collide$$ = False]; 
+     Graphics[{Black, 
+        Rectangle[{0, 0}, {1000, 1000}], White, 
+        Rectangle[$CellContext`pos$$ - {100, 
+         75}, $CellContext`pos$$ + {100, 0}], 
+        If[
+        Part[$CellContext`ballPos, 2] - $CellContext`ballRadius > 0, Red, {}], 
+        Disk[$CellContext`ballPos, $CellContext`ballRadius], 
+        Text[
+         Style["Score: " <> ToString[$CellContext`score$$], 15, Red], {500, 
+         950}], 
+        Text[
+         Style["Press Enter to Reset", 10, White], {500, 900}]}, 
+       PlotRange -> {{0, 1000}, {0, 1000}}], StandardForm],
+    ImageSizeCache->{288., {142., 146.}}],
+   EventHandlerTag[{"MouseClicked" :> SetOptions[
+       EvaluationNotebook[], WindowSelected -> True], "LeftArrowKeyDown" :> 
+     If[Part[$CellContext`pos$$, 1] > 100, 
+       SubtractFrom[$CellContext`pos$$, {90, 0}]], "RightArrowKeyDown" :> 
+     If[Part[$CellContext`pos$$, 1] < 900, 
+       AddTo[$CellContext`pos$$, {90, 0}]], "ReturnKeyDown" :> 
+     Module[{}, $CellContext`pos$$ = {500, 125}; $CellContext`collide$$ = 
+        False; $CellContext`score$$ = 0; $CellContext`speed$$ = 
+        5; $CellContext`ballPos = {500, 150}; $CellContext`ballVel = {1, 1}; 
+       Null], Method -> "Preemptive", PassEventsDown -> Automatic, 
+     PassEventsUp -> True}]],
+  DynamicModuleValues:>{},
+  Initialization:>($CellContext`ballPos = {500, 150}; $CellContext`ballVel = {
+     1, 1}; $CellContext`ballRadius = 20)]], "Output",
+ CellChangeTimes->{3.892468612890753*^9},
+ CellLabel->"Out[10]=",ExpressionUUID->"6fc7a247-6c56-4103-9e47-fe9819729c0c"]
+}, Open  ]]
+}, Open  ]]
+},
+WindowSize->{1152., 585.6},
+WindowMargins->{{
+  Automatic, -5.399999999999864}, {-5.399999999999977, Automatic}},
+TaggingRules-><|"TryRealOnly" -> False|>,
+Magnification:>0.8 Inherited,
+FrontEndVersion->"13.2 for Microsoft Windows (64-bit) (November 18, 2022)",
+StyleDefinitions->"Default.nb",
+ExpressionUUID->"9a79fa0e-3862-4d0e-9f28-f39cb81486f7"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[580, 22, 286, 4, 78, "Title",ExpressionUUID->"2c638d87-0bd9-4c6b-aa29-038cf692474b"],
+Cell[869, 28, 141, 3, 28, "Text",ExpressionUUID->"ddd323e6-89f5-49a0-b227-a685ec6ea972"],
+Cell[1013, 33, 1313, 19, 144, "Text",ExpressionUUID->"bfda9ca3-7f2c-465b-9c98-498d047ffe05"],
+Cell[CellGroupData[{
+Cell[2351, 56, 24462, 549, 1151, "Code",ExpressionUUID->"1898bf0f-279d-43e2-bb06-0de4683ecd79"],
+Cell[26816, 607, 4109, 76, 301, "Output",ExpressionUUID->"6fc7a247-6c56-4103-9e47-fe9819729c0c"]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+
